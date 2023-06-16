@@ -1,0 +1,71 @@
+Problem Statement
+
+You are provided with 'N' vertices numbered from 0 to 'N' - 1 and 'E' edges to form a directed graph. All the edges should be added in the given order. Initially, there are 'N components each having a single node. Your task is to find all the extra edges. An extra edge is defined as if the addition of which connects already connected nodes or components Le the number of components remains the same after adding the extra edge.
+
+Input Format:
+
+The first line contains a single integer 'T' representing the number of test cases. Then each test case follows.
+
+The first line of each test case will contain a single space- separated two integers 'N' and 'E' that denotes the number of vertices and edges in the given graph, respectively.
+
+The next 'E' lines of each test case will contain a single space- separated two integers 'U' and 'V which denotes the two vertices that the current edge connects.
+
+Output Format:
+
+For each test case, print all the extra edges in a new line. Each 1ine must have a single space-separated two integers which denote the vertices that the current extra edge connects.
+
+Solution:-
+
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+
+using namespace std;
+
+class UnionFind {
+private:
+    vector<int> parent;
+
+public:
+    UnionFind(int n) { //constructor
+        parent.resize(n);
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+        }
+    }
+
+    int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    void unite(int x, int y) {
+        int parentX = find(x);
+        int parentY = find(y);
+        if (parentX != parentY) {
+            parent[parentY] = parentX;
+        }
+    }
+};
+
+vector<vector<int>> extraEdges(int n, int e, vector<vector<int>>& edges) {
+    vector<vector<int>> extEdges; //Ans store karega
+    UnionFind uf(n);//object creation
+
+    for (const auto& edge : edges) {
+        int u = edge[0];
+        int v = edge[1];
+        int parentU = uf.find(u);
+        int parentV = uf.find(v);
+
+        if (parentU == parentV) {
+            extEdges.push_back(edge);
+        } else {
+            uf.unite(u, v);
+        }
+    }
+
+    return extEdges;
+}
